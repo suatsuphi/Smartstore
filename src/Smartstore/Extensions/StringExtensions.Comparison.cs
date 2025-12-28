@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -131,7 +132,7 @@ namespace Smartstore
         /// </summary>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEmpty(this string? value)
+        public static bool IsEmpty([NotNullWhen(false)] this string? value)
         {
             return string.IsNullOrWhiteSpace(value);
         }
@@ -144,7 +145,7 @@ namespace Smartstore
         /// 	<c>true</c> if the string is all white space; otherwise, <c>false</c>.
         /// </returns>
         [DebuggerStepThrough]
-        public static bool IsWhiteSpace(this string value)
+        public static bool IsWhiteSpace([NotNullWhen(false)] this string value)
         {
             if (value == null)
             {
@@ -170,7 +171,7 @@ namespace Smartstore
         /// </summary>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool HasValue(this string? value)
+        public static bool HasValue([NotNullWhen(true)] this string? value)
         {
             return !string.IsNullOrWhiteSpace(value);
         }
@@ -187,7 +188,7 @@ namespace Smartstore
 
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsWebUrl(this string? value, bool schemeIsOptional = false)
+        public static bool IsWebUrl([NotNullWhen(true)] this string? value, bool schemeIsOptional = false)
         {
             return IsWebUrlInternal(value, schemeIsOptional);
         }
@@ -259,7 +260,7 @@ namespace Smartstore
 
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEnclosedIn(this string? value, string? enclosedIn, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        public static bool IsEnclosedIn([NotNullWhen(true)] this string? value, string? enclosedIn, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
         {
             return IsEnclosedIn(value.AsSpan(), enclosedIn.AsSpan(), comparison);
         }

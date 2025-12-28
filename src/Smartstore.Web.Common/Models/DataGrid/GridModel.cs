@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Smartstore.Web.Models.DataGrid
 {
@@ -19,20 +19,20 @@ namespace Smartstore.Web.Models.DataGrid
 
         public GridModel(IEnumerable<T> rows)
         {
-            Rows = Guard.NotNull(rows, nameof(rows));
+            Rows = Guard.NotNull(rows);
         }
 
-        [JsonProperty("rows")]
+        [JsonPropertyName("rows")]
         public IEnumerable<T> Rows { get; set; }
 
         [IgnoreDataMember]
         IEnumerable IGridModel.Rows
             => this.Rows;
 
-        [JsonProperty("total")]
+        [JsonPropertyName("total")]
         public int Total { get; set; }
 
-        [JsonProperty("aggregates")]
+        [JsonPropertyName("aggregates")]
         public object Aggregates { get; set; }
     }
 }

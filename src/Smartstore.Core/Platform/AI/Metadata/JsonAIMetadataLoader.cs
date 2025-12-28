@@ -1,11 +1,11 @@
 ﻿#nullable enable
 
+using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Smartstore.Caching;
-using Smartstore.ComponentModel;
+using Smartstore.IO;
+using Smartstore.Json;
 
 namespace Smartstore.Core.AI.Metadata
 {
@@ -13,19 +13,14 @@ namespace Smartstore.Core.AI.Metadata
     {
         private readonly IMemoryCache _cache;
         private readonly IApplicationContext _appContext;
-        private readonly JsonSerializerSettings _serializerSettings;
+        private readonly JsonSerializerOptions _jsonOptions;
 
         public JsonAIMetadataLoader(IMemoryCache cache, IApplicationContext appContext)
         {
             _cache = cache;
             _appContext = appContext;
 
-            _serializerSettings = JsonConvert.DefaultSettings!();
-            _serializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
-            _serializerSettings.ContractResolver = new SmartContractResolver
-            {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            };
+            _jsonOptions = SmartJsonOptions.CamelCased;
         }
 
         protected static string BuildCacheKey(string moduleSystemName)
@@ -83,8 +78,7 @@ namespace Smartstore.Core.AI.Metadata
                 throw new InvalidOperationException($"Metadata file for {moduleSystemName} not found.");
             }
 
-            var json = file.ReadAllText();
-            if (Deserialize(json) is not AIMetadata metadata)
+            if (Deserialize(file) is not AIMetadata metadata)
             {
                 throw new InvalidOperationException("Failed to deserialize AIMetadata.");
             }
@@ -96,9 +90,10 @@ namespace Smartstore.Core.AI.Metadata
             return (metadata, changeToken);
         }
 
-        protected virtual AIMetadata? Deserialize(string json)
+        protected virtual AIMetadata? Deserialize(IFile file)
         {
-            return JsonConvert.DeserializeObject<AIMetadata>(json, _serializerSettings);
+            using var stream = file.OpenRead();
+            return JsonSerializer.Deserialize<AIMetadata>(stream, _jsonOptions);
         }
 
         public void Invalidate(string moduleSystemName)

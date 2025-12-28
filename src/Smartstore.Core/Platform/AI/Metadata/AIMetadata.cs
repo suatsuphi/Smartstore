@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
-using Newtonsoft.Json;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Smartstore.Core.AI.Metadata
 {
@@ -40,7 +41,7 @@ namespace Smartstore.Core.AI.Metadata
         /// <summary>
         /// A flag indicating whether this instance is a post-processed clone.
         /// </summary>
-        [JsonIgnore]
+        [IgnoreDataMember]
         public bool PostProcessed { get; set; }
 
         #endregion

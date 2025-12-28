@@ -293,7 +293,7 @@ namespace Smartstore.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmPayment()
         {
-            var result = await _checkoutWorkflow.ConfirmPaymentAsync(false, await CreateCheckoutContext());
+            var result = await _checkoutWorkflow.ConfirmPaymentAsync(await CreateCheckoutContext());
             var redirectUrl = result.Success && result.ActionResult is RedirectResult rs ? rs?.Url.NullEmpty() : null;
 
             if (redirectUrl == null && result.ActionResult != null)
@@ -311,12 +311,17 @@ namespace Smartstore.Web.Controllers
         }
 
         /// <summary>
-        /// After completing the payment, the payment provider redirects the customer 
-        /// to this action method to process the payment result.
+        /// After completing the payment, the payment provider redirects the customer to this action method.
         /// </summary>
-        public async Task<IActionResult> PaymentConfirmed()
+        /// <remarks>
+        /// We have been redirected to third-party payment page via browser (JavaScript "window.location").
+        /// Cookies are thereby preserved. The customer and the checkout state object are the same as before the redirection.
+        /// Without cookies we would get a new guest customer and an empty checkout state object here. In this case, CheckoutState could not be used.
+        /// We would have to either cache state obejct for x minutes or store it in the database.
+        /// </remarks>
+        public async Task<IActionResult> PaymentCompleted()
         {
-            var result = await _checkoutWorkflow.ConfirmPaymentAsync(true, await CreateCheckoutContext());
+            var result = await _checkoutWorkflow.CompletePaymentAsync(await CreateCheckoutContext());
 
             return result.ActionResult ?? RedirectToAction(nameof(Completed));
         }
