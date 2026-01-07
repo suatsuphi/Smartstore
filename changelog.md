@@ -18,6 +18,9 @@
 ### Improvements
 
 - Moved AI command tools from Media Manager toolbar to folder dropwdown menu.
+- #1459 Cart sorting: The selected items must always come before the unselected ones.
+- Checkout: After payment confirmation on the third-party site, you will be redirected directly to the completed page if successful.
+The intermediate step via the confirmation page is omitted.
 
 ### Bugfixes
 
@@ -27,6 +30,8 @@
 - #1455 "Duplicate keys detected: `row-undefined`" in currency grid.
 - Adding new addresses wasn't possible because model state was invalid due to missing email fields for registered customers.
 - #1457 UI: "Show All" brand link content (ellipsis) is not centered in manufacturer carousel.
+- Gemini: Fixed `ArgumentNullException` when creating embedded images in rich text.
+- #1452 The off-canvas menu is called infinitely often if the permission for shop access is not granted.
 
 
 ## Smartstore 6.3.0

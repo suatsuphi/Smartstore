@@ -82,9 +82,6 @@ internal class Startup : StarterBase
             // Alternative: set-up a path template for each (!) OData action method.
             o.ResolveConflictingActions(descriptions => descriptions.First());
 
-            //o.IgnoreObsoleteActions();
-            //o.IgnoreObsoleteProperties();
-
             o.CustomSchemaIds(type => OpenApiUtility.GetSchemaId(type, true));
 
             o.AddSecurityDefinition("Basic", new OpenApiSecurityScheme
@@ -130,9 +127,7 @@ internal class Startup : StarterBase
             IncludeXmlComments(o, appContext);
         });
 
-        // INFO: needs to be placed after AddSwaggerGen(). Without this statement, the examples in the documentation
-        // will contain everything, every tiny bit of any related object will be serialized.
-        services.AddSwaggerGenNewtonsoftSupport();
+        services.AddSingleton<ISerializerDataContractResolver, SmartSerializerDataContractResolver>();
     }
 
     public override void ConfigureContainer(ContainerBuilder builder, IApplicationContext appContext)
@@ -145,9 +140,6 @@ internal class Startup : StarterBase
         //services.TryAddEnumerable(ServiceDescriptor.Transient<IODataControllerActionConvention, CustomRoutingConvention>());
 
         mvcBuilder.AddOData();
-
-        // INFO: no effect using OData 8.0.11 and OData.NewtonsoftJson 8.0.4. JSON is never written with Newtonsoft.Json.
-        //.AddODataNewtonsoftJson();
     }
 
     public override void BuildPipeline(RequestPipelineBuilder builder)
